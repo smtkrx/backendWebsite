@@ -362,12 +362,48 @@ export interface AdminTransferTokenPermission extends Schema.CollectionType {
   };
 }
 
-export interface ApiPersonPerson extends Schema.CollectionType {
-  collectionName: 'people';
+export interface ApiCompanyCompany extends Schema.CollectionType {
+  collectionName: 'companies';
   info: {
-    singularName: 'person';
-    pluralName: 'people';
-    displayName: 'Person';
+    singularName: 'company';
+    pluralName: 'companies';
+    displayName: 'Company';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    companyName: Attribute.String;
+    reports: Attribute.Relation<
+      'api::company.company',
+      'oneToMany',
+      'api::report.report'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::company.company',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::company.company',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiReportReport extends Schema.CollectionType {
+  collectionName: 'reports';
+  info: {
+    singularName: 'report';
+    pluralName: 'reports';
+    displayName: 'Report';
     description: '';
   };
   options: {
@@ -375,23 +411,30 @@ export interface ApiPersonPerson extends Schema.CollectionType {
   };
   attributes: {
     firstName: Attribute.String & Attribute.Required;
-    lastName: Attribute.String & Attribute.Required;
-    email: Attribute.Email & Attribute.Required;
-    country: Attribute.String & Attribute.Required;
-    streetAddress: Attribute.Text;
-    city: Attribute.String;
     file: Attribute.Media & Attribute.Required;
+    user: Attribute.Relation<
+      'api::report.report',
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    company: Attribute.Relation<
+      'api::report.report',
+      'manyToOne',
+      'api::company.company'
+    >;
+    lastName: Attribute.String & Attribute.Required;
+    fileName: Attribute.String & Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
-      'api::person.person',
+      'api::report.report',
       'oneToOne',
       'admin::user'
     > &
       Attribute.Private;
     updatedBy: Attribute.Relation<
-      'api::person.person',
+      'api::report.report',
       'oneToOne',
       'admin::user'
     > &
@@ -779,7 +822,6 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
   options: {
     draftAndPublish: false;
-    timestamps: true;
   };
   attributes: {
     username: Attribute.String &
@@ -808,6 +850,11 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'manyToOne',
       'plugin::users-permissions.role'
     >;
+    reports: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::report.report'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -835,7 +882,8 @@ declare module '@strapi/types' {
       'admin::api-token-permission': AdminApiTokenPermission;
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
-      'api::person.person': ApiPersonPerson;
+      'api::company.company': ApiCompanyCompany;
+      'api::report.report': ApiReportReport;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::content-releases.release': PluginContentReleasesRelease;
