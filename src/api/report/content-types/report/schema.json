@@ -46,6 +46,9 @@
     "fileName": {
       "type": "string",
       "required": true
+    },
+    "description": {
+      "type": "text"
     }
   }
 }

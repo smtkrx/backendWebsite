@@ -424,6 +424,7 @@ export interface ApiReportReport extends Schema.CollectionType {
     >;
     lastName: Attribute.String & Attribute.Required;
     fileName: Attribute.String & Attribute.Required;
+    description: Attribute.Text;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
